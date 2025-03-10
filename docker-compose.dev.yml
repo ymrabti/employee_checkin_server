@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  node-app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: node-app
+    environment:
+      MONGODB_URL:
+    ports:
+      - "6280:6280"
+    depends_on:
+      - mongodb
+    container_name: ubuntu_ecogis
+    volumes:
+      - .:/usr/src/node-app
+      - image-storage:/usr/src/webservice/static
+    networks:
+      - node-network
+
+  mongodb:
+    image: mongo:4.2.1-bionic
+    container_name: ubuntu_mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - dbdata:/data/db
+    networks:
+      - node-network
+
+volumes:
+  image-storage:
+  dbdata:
+
+networks:
+  node-network:
+    driver: bridge
