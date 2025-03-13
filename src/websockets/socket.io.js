@@ -33,10 +33,6 @@ class MySocketIO {
             }
             sockett.user = user;
             sockett.join(user.id);
-            users.set(sockett.id, {
-                id: user.id,
-                name: user.name,
-            });
             next();
         })(sockett.request, {}, next);
     }
@@ -49,7 +45,6 @@ class MySocketIO {
         function disconnect(reason) {
             logger.info(`CLIENT DISCONNECTED WITH A REASON: ${reason}`);
             msocket.broadcast.emit(EVENTS.USER_LEAVE, null)
-            users.delete(msocket);
         }
 
         function handleQr() {
@@ -65,7 +60,6 @@ class MySocketIO {
             ID: ${msocket.user.id}
             Role = ${msocket.user.role}`);
         if (msocket.user.role === 'fieldWorker') {
-            msocket.join(msocket.user.id)
             handleQr();
             setInterval(() => {
                 handleQr();

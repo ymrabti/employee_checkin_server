@@ -3,6 +3,8 @@ const { Socket } = require("socket.io");
 const { uploadService } = require('../services');
 const httpStatus = require('http-status');
 const authQr = require('../middlewares/qr');
+const { EVENTS } = require('../websockets/socket.io-config');
+const auth = require('../middlewares/auth');
 
 
 const router = express.Router();
@@ -15,8 +17,8 @@ const router = express.Router();
  */
 const ecoRouterRealtime = (socket) => {
 
-    router.post('/scan', authQr(), (req, res) => {
-        socket.to(req.userOfferedQr.id).emit(req.user);
+    router.post('/scan', auth(), authQr(), (req, res) => {
+        socket.to(req.userOfferedQr.id).emit(EVENTS.QR_SCANNE, req.user);
         res.sendStatus(httpStatus.OK).end()
     });
 
