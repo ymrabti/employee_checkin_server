@@ -12,7 +12,7 @@ const passport = require('passport');
 const httpStatus = require('http-status');
 const config = require('./config/config');
 const morgan = require('./config/morgan');
-const { jwtStrategy, jwtSocketStrategy, jwtSocketHeadersStrategy } = require('./config/passport');
+const { jwtStrategy, jwtSocketStrategy, jwtSocketHeadersStrategy, qrAuthFromBodyStrategy } = require('./config/passport');
 const { authLimiter } = require('./middlewares/rateLimiter');
 const ecoRouter = require('./routes/eco_router');
 const routes = require('./routes');
@@ -48,7 +48,7 @@ const socketServer = new Server(httpServer, {
         methods: ['GET', 'POST'],
     },
 });
-const socket = socketServer.of('/ecogeste/');
+const socket = socketServer.of('/employee_qr/');
 new MySocketIO(socket);
 
 // ! // // // // // //  SOCKET // // // // // // // 
@@ -80,6 +80,7 @@ app.options('*', cors());
 // jwt authentication
 app.use(passport.initialize());
 passport.use('jwtSocketHeaders', jwtSocketHeadersStrategy);
+passport.use('qrScannAuthBody', qrAuthFromBodyStrategy);
 passport.use('jwtSocket', jwtSocketStrategy);
 passport.use('jwt', jwtStrategy);
 
@@ -89,7 +90,7 @@ if (config.env === 'production') {
 }
 
 // api routes
-const other = ecoRouter(socket);
+const ScanRoute = ecoRouter(socket);
 
 const topStatic = resolve('static');
 app.get('/', (req, res) => {
@@ -98,7 +99,7 @@ app.get('/', (req, res) => {
 );
 app.use('/cdn', express.static(topStatic))
 app.use('/api', routes);
-app.use('/api/Agent', other);
+app.use('/api/ScanNow', ScanRoute);
 // send back a 404 error for any unknown api request
 /**
  * get Streets By QUID

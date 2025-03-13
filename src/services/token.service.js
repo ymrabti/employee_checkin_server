@@ -11,7 +11,7 @@ const logger = require('../config/logger');
 /**
  * Generate token
  * @param {ObjectId} userId
- * @param {Moment} expires
+ * @param {moment.Moment} expires
  * @param {string} type
  * @param {string} [secret]
  * @returns {string}

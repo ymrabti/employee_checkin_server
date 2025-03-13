@@ -5,9 +5,9 @@ const { roleRights } = require('../config/roles');
 
 const verifyCallback = (req, resolve, reject, requiredRights) => async (err, user, info) => {
     if (err || info || !user) {
-        return reject(new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate'));
+        return reject(new ApiError(httpStatus.UNAUTHORIZED, 'Qr Invalid or expired'));
     }
-    req.user = user;
+    req.userOfferedQr = user;
 
     if (requiredRights.length) {
         const userRights = roleRights.get(user.role);
@@ -20,13 +20,13 @@ const verifyCallback = (req, resolve, reject, requiredRights) => async (err, use
     resolve();
 };
 
-const auth = (...requiredRights) => async (req, res, next) => {
+const authQr = (...requiredRights) => async (req, res, next) => {
     return new Promise((resolve, reject) => {
-        passport.authenticate('jwt', { session: false },
+        passport.authenticate('qrScannAuthBody', { session: false },
             verifyCallback(req, resolve, reject, requiredRights))(req, res, next);
     })
         .then(() => next())
         .catch((err) => next(err));
 };
 
-module.exports = auth;
+module.exports = authQr;

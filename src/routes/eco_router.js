@@ -2,6 +2,7 @@ const express = require('express');
 const { Socket } = require("socket.io");
 const { uploadService } = require('../services');
 const httpStatus = require('http-status');
+const authQr = require('../middlewares/qr');
 
 
 const router = express.Router();
@@ -13,6 +14,11 @@ const router = express.Router();
  * @returns {express.Router} Express router
  */
 const ecoRouterRealtime = (socket) => {
+
+    router.post('/scan', authQr(), (req, res) => {
+        socket.to(req.userOfferedQr.id).emit(req.user);
+        res.sendStatus(httpStatus.OK).end()
+    });
 
     router.post('/upload', uploadService.upload.single('picture'), (req, res) => {
         if (!req.file) {

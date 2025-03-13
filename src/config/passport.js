@@ -17,6 +17,10 @@ const jwtSocketHeadersOptions = {
     secretOrKey: config.jwt.secret,
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 };
+const qrBodyOptions = {
+    secretOrKey: config.jwt.secret,
+    jwtFromRequest: ExtractJwt.fromBodyField('Qr'),
+};
 
 const jwtVerify = async (payload, done) => {
     try {
@@ -33,12 +37,29 @@ const jwtVerify = async (payload, done) => {
     }
 };
 
+const qrVerify = async (payload, done) => {
+    try {
+        if (payload.type !== tokenTypes.QR) {
+            throw new Error('Invalid Qr Code');
+        }
+        const user = await User.findById(payload.sub);
+        if (!user) {
+            return done(null, false);
+        }
+        done(null, user);
+    } catch (error) {
+        done(error, false);
+    }
+};
+
 const jwtStrategy = new JwtStrategy(jwtOptions, jwtVerify);
 const jwtSocketStrategy = new JwtStrategy(jwtSocketOptions, jwtVerify);
 const jwtSocketHeadersStrategy = new JwtStrategy(jwtSocketHeadersOptions, jwtVerify);
+const qrAuthFromBodyStrategy = new JwtStrategy(qrBodyOptions, qrVerify);
 
 module.exports = {
     jwtStrategy,
     jwtSocketStrategy,
     jwtSocketHeadersStrategy,
+    qrAuthFromBodyStrategy,
 };

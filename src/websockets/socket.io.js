@@ -1,7 +1,11 @@
 const { Socket } = require("socket.io");
 const logger = require("../config/logger");
+const moment = require('moment');
 const passport = require('passport');
 const { EVENTS } = require("./socket.io-config");
+const config = require("../config/config");
+const { generateToken } = require("../services/token.service");
+const { tokenTypes } = require("../config/tokens");
 const users = new Map()
 class MySocketIO {
     socket;
@@ -48,13 +52,32 @@ class MySocketIO {
             users.delete(msocket);
         }
 
-        logger.info(`NEW CLIENT CONNECTED ${msocket.id}, ID: ${msocket.user.id}`);
+        function handleQr() {
+            const qrExpires = moment().add(config.jwt.qrExpirationSeconds, 'seconds');
+            const qr_new = generateToken(msocket.user.id, qrExpires, tokenTypes.QR);
+            msocket.emit(EVENTS.QR_STREAM, {
+                qr: qr_new,
+                generated: (new Date()).toISOString(),
+                lifecyle_in_seconds: config.jwt.qrExpirationSeconds,
+            });
+        }
+        logger.info(`NEW CLIENT CONNECTED ${msocket.id}, 
+            ID: ${msocket.user.id}
+            Role = ${msocket.user.role}`);
+        if (msocket.user.role === 'fieldWorker') {
+            msocket.join(msocket.user.id)
+            handleQr();
+            setInterval(() => {
+                handleQr();
+            }, config.jwt.qrExpirationSeconds * 1000);
+        }
         // logger.info(JSON.stringify(msocket.user, null, 4));
         msocket.on(EVENTS.DISCONNECT, (reason) => disconnect(reason));
         msocket.on(EVENTS.CONNECT_ERROR, (err) => {
             logger.info(`CONNECT_ERROR DUE TO ${err.message}`);
         });
     }
+
 }
 
 module.exports = {

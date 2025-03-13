@@ -25,8 +25,8 @@ const register = async (req, res) => {
  * @param {express.Response} res response
  */
 const login = async (req, res) => {
-    const { email, phoneNumber, password } = req.body;
-    const user = await authService.loginUserWithEmailAndPassword(email, phoneNumber, password);
+    const { email, username, password } = req.body;
+    const user = await authService.loginUserWithEmailAndPassword(email, username, password);
     const tokens = await tokenService.generateAuthTokens(user);
     res.send({
         user,

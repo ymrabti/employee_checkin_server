@@ -19,9 +19,9 @@ const register = {
 const login = {
     body: Joi.object().keys({
         email: Joi.string().email().optional(),
-        phoneNumber: Joi.string().optional(),
+        username: Joi.string().optional(),
         password: Joi.string().required(),
-    }).xor('email', 'phoneNumber'), // Ensures exactly one of 'email' or 'phoneNumber' is provided
+    }).xor('email', 'username'), // Ensures exactly one of 'email' or 'username' is provided
 };
 
 const logout = {
