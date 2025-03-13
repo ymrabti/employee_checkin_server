@@ -46,8 +46,8 @@ const getUserById = async (id) => {
  * @param {ObjectId} id
  * @returns {Promise<User>}
  */
-const getUserByPhoneOrEmail = async (phone, email) => {
-    return phone != null ? User.findOne({ phoneNumber: phone }) : User.findOne({ email: email });
+const getUserByUsernameOrEmail = async (username, email) => {
+    return username != null ? User.findOne({ username: username }) : User.findOne({ email: email });
 };
 
 /**
@@ -107,7 +107,7 @@ module.exports = {
     queryUsers,
     getUserById,
     getUserByEmail,
-    getUserByPhoneOrEmail,
+    getUserByUsernameOrEmail,
     updateUserById,
     deleteUserById,
 };

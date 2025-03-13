@@ -1,12 +1,14 @@
 const Joi = require('joi');
-const { password } = require('./custom.validation');
+const { password, email } = require('./custom.validation');
 
 const register = {
     body: Joi.object().keys({
-        phone: Joi.string().required(),
+        photo: Joi.string().required(),
+        guid: Joi.string().required(),
+        username: Joi.string().required(),
         firstName: Joi.string().required(),
         lastName: Joi.string().required(),
-        gender: Joi.string(),
+        email: Joi.string().required().custom(email),
         password: Joi.string().required().custom(password),
         confirmPassword: Joi.string().required().valid(Joi.ref('password')).messages({
             'any.only': 'Password and Confirm Password must match',

@@ -106,7 +106,7 @@ app.use('/api/Agent', other);
  * @param {express.Response} res response
  */
 app.use((req, res, next) => {
-    console.log(req.path + ' Not found');
+    console.log(req.path + 'path Not found');
     next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
 });
 

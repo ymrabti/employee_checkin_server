@@ -9,20 +9,15 @@ const logger = require('../config/logger');
  * @param {express.Response} res response
  */
 const register = async (req, res) => {
+    if (!req.file) {
+        return res.status(httpStatus.BAD_REQUEST).json({ message: "No file uploaded" });
+    }
     const user = await userService.createUser({
         ...req.body,
         phoneNumber: req.body.phone,
     });
     const tokens = await tokenService.generateAuthTokens(user);
-    // res.status(httpStatus.CREATED).send({ user, tokens } );
-    res.status(httpStatus.CREATED).send({
-        "accessToken": tokens.access.token,
-        "expiration": tokens.access.expires,
-        "refreshToken": tokens.refresh.token,
-        "refreshTokenExpires": tokens.refresh.expires,
-        "tokenType": "Bearer",
-        "userId": user.id
-    });
+    res.status(httpStatus.CREATED).send({ user, tokens });
 };
 /**
  * get Streets By QUID
@@ -34,12 +29,8 @@ const login = async (req, res) => {
     const user = await authService.loginUserWithEmailAndPassword(email, phoneNumber, password);
     const tokens = await tokenService.generateAuthTokens(user);
     res.send({
-        "accessToken": tokens.access.token,
-        "expiration": tokens.access.expires,
-        "refreshToken": tokens.refresh.token,
-        "refreshTokenExpires": tokens.refresh.expires,
-        "tokenType": "Bearer",
-        "userId": user.id
+        user,
+        tokens,
     });
 };
 /**
@@ -66,7 +57,7 @@ const refreshTokens = async (req, res) => {
  * @param {express.Response} res response
  */
 const sendOTP = async (req, res) => {
-    var user = userService.getUserByPhoneOrEmail(req.body.phone)
+    var user = userService.getUserByUsernameOrEmail(req.body.username)
     const resetPasswordToken = await tokenService.generateResetPasswordToken(user.email);
     res.status(httpStatus.NO_CONTENT).send();
 };

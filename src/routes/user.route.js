@@ -15,6 +15,11 @@ router
 router
     .route('/check')
     .get(validate(userValidation.getUser), userController.checkUser)
+
+router
+    .route('/photo/:username')
+    .get(validate(userValidation.getUserPhoto), userController.getUserPhoto)
+
 router
     .route('/search')
     .get(validate(userValidation.getUser), auth(), userController.getUser)

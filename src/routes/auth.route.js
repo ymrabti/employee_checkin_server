@@ -3,11 +3,12 @@ const validate = require('../middlewares/validate');
 const authValidation = require('../validations/auth.validation');
 const authController = require('../controllers/auth.controller');
 const auth = require('../middlewares/auth');
+const registerMiddleware = require('../middlewares/register.middleware');
 
 const router = express.Router();
 
-router.post('/registerCitizen', validate(authValidation.register), authController.register);
-router.post('/Login-Citizen', validate(authValidation.login), authController.login);
+router.post('/Register', registerMiddleware, authController.register);
+router.post('/Login', validate(authValidation.login), authController.login);
 router.post('/Logout', validate(authValidation.logout), authController.logout);
 router.post('/refresh-tokens', validate(authValidation.refreshTokens), authController.refreshTokens);
 router.post('/change-password', validate(authValidation.changePassword), auth(), authController.changePassword);

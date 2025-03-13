@@ -20,6 +20,12 @@ const getUsers = {
     }),
 };
 
+const getUserPhoto = {
+    params: Joi.object().keys({
+        username: Joi.string().required(objectId),
+    }),
+};
+
 const getUser = {
     params: Joi.object().keys({
         userId: Joi.string().custom(objectId),
@@ -32,19 +38,10 @@ const updateUser = {
             id: Joi.string().required(),
             firstName: Joi.string().required(),
             lastName: Joi.string().required(),
-            totalPoints: Joi.string().allow(null),
             email: Joi.string().email().allow(null),
             gender: Joi.string().allow(null).valid('male', 'female'),
             dateOfBirth: Joi.date().allow(null).iso(),
-            address: Joi.object().keys({
-                Type: Joi.string().allow(null),
-                commune: Joi.string().allow(null),
-                quartier: Joi.string().allow(null),
-                streetName: Joi.string().allow(null),
-                houseNumber: Joi.string().allow(null)
-            }).allow(null),
             identityCard: Joi.string().allow(null),
-            scholar: Joi.string().allow(null),
         })
         .min(1),
 };
@@ -59,6 +56,7 @@ module.exports = {
     createUser,
     getUsers,
     getUser,
+    getUserPhoto,
     updateUser,
     deleteUser,
 };

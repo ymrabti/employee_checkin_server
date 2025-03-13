@@ -6,6 +6,13 @@ const { roles } = require('../config/roles');
 
 const userSchema = mongoose.Schema(
     {
+        guid: {
+            type: String,
+            trim: true,
+            lowercase: true,
+            unique: true,
+            required: true,
+        },
         email: {
             type: String,
             trim: true,
@@ -15,11 +22,6 @@ const userSchema = mongoose.Schema(
                     throw new Error('Invalid email');
                 }
             },
-        },
-        address: {
-            quartier: { type: String },
-            streetName: { type: String },
-            houseNumber: { type: String }
         },
         password: {
             type: String,
@@ -46,9 +48,20 @@ const userSchema = mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        username: {
+            type: String,
+            trim: true,
+            unique: true,
+            required: true,
+        },
+        photo: {
+            type: String,
+            trim: true,
+            unique: true,
+            required: true,
+        },
         phoneNumber: {
             type: String,
-            required: true,
             trim: true,
             unique: true,
             validate(value) {
@@ -67,22 +80,13 @@ const userSchema = mongoose.Schema(
             required: true,
             trim: true,
         },
-        totalPoints: {
-            type: Number,
-        },
         dateOfBirth: {
             type: Date,
         },
         identityCard: {
             type: String,
         },
-        scholar: {
-            type: String,
-        },
         userName: {
-            type: String,
-        },
-        qr: {
             type: String,
         },
         gender: {
@@ -106,6 +110,7 @@ userSchema.plugin(paginate);
  * @returns {Promise<boolean>}
  */
 userSchema.statics.isPhoneTaken = async function (phoneNumber, excludeUserId) {
+    if (!phoneNumber) return false
     const user = await this.findOne({ phoneNumber, _id: { $ne: excludeUserId } });
     return !!user;
 };
