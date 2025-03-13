@@ -17,6 +17,8 @@ const userSchema = mongoose.Schema(
             type: String,
             trim: true,
             lowercase: true,
+            unique: true,
+            sparse: true,
             validate(value) {
                 if (!validator.isEmail(value)) {
                     throw new Error('Invalid email');
@@ -57,13 +59,13 @@ const userSchema = mongoose.Schema(
         photo: {
             type: String,
             trim: true,
-            unique: true,
             required: true,
         },
         phoneNumber: {
             type: String,
             trim: true,
             unique: true,
+            sparse: true,
             validate(value) {
                 if (!validator.isMobilePhone(value)) {
                     throw new Error('Invalid Phone number');
