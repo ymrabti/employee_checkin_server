@@ -18,7 +18,7 @@ router
 
 router
     .route('/photo/:username')
-    .get(validate(userValidation.getUserPhoto), userController.getUserPhoto)
+    .get(auth(), validate(userValidation.getUserPhoto), userController.getUserPhoto)
 
 router
     .route('/search')
