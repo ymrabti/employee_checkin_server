@@ -18,8 +18,7 @@ const { authValidation } = require('../validations');
  * @returns 
  */
 async function registerMiddleware(req, res, next) {
-    var userGuid = uuidv4()
-    const uploadDirectory = resolve(uploadService.pathUploads, userGuid);
+    const uploadDirectory = resolve(uploadService.pathUploads, req.body.username);
     if (!existsSync(uploadDirectory)) {
         mkdirSync(uploadDirectory, { recursive: true });
         console.log('Folder created successfully!');
@@ -30,7 +29,7 @@ async function registerMiddleware(req, res, next) {
         keepExtensions: true,
         multiples: true,
         filename: (name, extension) => {
-            const fn = `profile_picture${extension}`;
+            const fn = `${uuidv4()}${extension}`;
             fileName = fn;
             return fn;
         }
@@ -54,7 +53,7 @@ async function registerMiddleware(req, res, next) {
             }
         }
 
-        req.body = { ...req.body, ...ffields, guid: userGuid, photo: fileName };
+        req.body = { ...req.body, ...ffields, photo: fileName };
 
         const object = {
             ...pick(req, Object.keys(validSchema))

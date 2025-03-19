@@ -3,13 +3,14 @@ const auth = require('../middlewares/auth');
 const validate = require('../middlewares/validate');
 const userValidation = require('../validations/user.validation');
 const userController = require('../controllers/user.controller');
+const { uploadService } = require('../services');
 
 const router = express.Router();
 
 router
     .route('/')
     .post(auth('manageUsers'), validate(userValidation.createUser), userController.createUser)
-    .put(validate(userValidation.updateUser), auth(), userController.updateUser)
+    .put(auth(), validate(userValidation.updateUser), userController.updateUser)
     .get(auth('getUsers'), validate(userValidation.getUsers), userController.getUsers);
 
 router
@@ -18,11 +19,12 @@ router
 
 router
     .route('/photo/:username')
+    .post(auth(), uploadService.upload.single('photo'), userController.updateProfilePicture)
     .get(auth(), validate(userValidation.getUserPhoto), userController.getUserPhoto)
 
 router
     .route('/search')
-    .get(validate(userValidation.getUser), auth(), userController.getUser)
+    .get(auth(), validate(userValidation.getUser), userController.getUser)
     .delete(auth('manageUsers'), validate(userValidation.deleteUser), userController.deleteUser);
 
 module.exports = router;

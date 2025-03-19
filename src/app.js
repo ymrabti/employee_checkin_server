@@ -24,6 +24,13 @@ const { resolve } = require('path');
 const app = express();
 const httpServer = createServer(app);
 
+// jwt authentication
+app.use(passport.initialize());
+passport.use('jwtSocketHeaders', jwtSocketHeadersStrategy);
+passport.use('qrScannAuthBody', qrAuthFromBodyStrategy);
+passport.use('jwtSocket', jwtSocketStrategy);
+passport.use('jwt', jwtStrategy);
+
 const generateSwaggerSpec = () => {
     return swaggerJsdoc({
         definition: {
@@ -49,7 +56,7 @@ const socketServer = new Server(httpServer, {
     },
 });
 const socket = socketServer.of('/employee_qr/');
-new MySocketIO(socket);
+const chatObject = new MySocketIO(socket);
 
 // ! // // // // // //  SOCKET // // // // // // // 
 if (config.env !== 'test') {
@@ -77,12 +84,6 @@ app.use(compression());
 app.use(cors());
 app.options('*', cors());
 
-// jwt authentication
-app.use(passport.initialize());
-passport.use('jwtSocketHeaders', jwtSocketHeadersStrategy);
-passport.use('qrScannAuthBody', qrAuthFromBodyStrategy);
-passport.use('jwtSocket', jwtSocketStrategy);
-passport.use('jwt', jwtStrategy);
 
 // limit repeated failed requests to auth endpoints
 if (config.env === 'production') {
@@ -90,7 +91,7 @@ if (config.env === 'production') {
 }
 
 // api routes
-const ScanRoute = ecoRouter(socket);
+const ScanRoute = ecoRouter(socket, chatObject);
 
 const topStatic = resolve('static');
 app.get('/', (req, res) => {

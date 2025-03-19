@@ -1,4 +1,4 @@
-const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
+const { Strategy, ExtractJwt } = require('passport-jwt');
 const config = require('./config');
 const { tokenTypes } = require('./tokens');
 const { User } = require('../models');
@@ -52,10 +52,10 @@ const qrVerify = async (payload, done) => {
     }
 };
 
-const jwtStrategy = new JwtStrategy(jwtOptions, jwtVerify);
-const jwtSocketStrategy = new JwtStrategy(jwtSocketOptions, jwtVerify);
-const jwtSocketHeadersStrategy = new JwtStrategy(jwtSocketHeadersOptions, jwtVerify);
-const qrAuthFromBodyStrategy = new JwtStrategy(qrBodyOptions, qrVerify);
+const jwtStrategy = new Strategy(jwtOptions, jwtVerify);
+const jwtSocketStrategy = new Strategy(jwtSocketOptions, jwtVerify);
+const jwtSocketHeadersStrategy = new Strategy(jwtSocketHeadersOptions, jwtVerify);
+const qrAuthFromBodyStrategy = new Strategy(qrBodyOptions, qrVerify);
 
 module.exports = {
     jwtStrategy,
