@@ -3,12 +3,14 @@ const httpStatus = require('http-status');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const uuidv4 = require('uuid').v4;
+const { rename } = require('fs');
 const { IncomingForm } = require('formidable');
 const { Request, Response, NextFunction } = require('express');
 const { resolve, join } = require('path');
 const { uploadService } = require('../services');
 const { existsSync, mkdirSync } = require('fs');
 const { authValidation } = require('../validations');
+const { makeIfNorExists } = require('../services/upload.service');
 
 /**
  * 
@@ -18,11 +20,9 @@ const { authValidation } = require('../validations');
  * @returns 
  */
 async function registerMiddleware(req, res, next) {
-    const uploadDirectory = resolve(uploadService.pathUploads, req.body.username);
-    if (!existsSync(uploadDirectory)) {
-        mkdirSync(uploadDirectory, { recursive: true });
-        console.log('Folder created successfully!');
-    }
+    const uploadDirectory = resolve(uploadService.pathUploads, '_temp_');
+    makeIfNorExists(uploadDirectory)
+
     let fileName;
     const form = new IncomingForm({
         uploadDir: uploadDirectory,
@@ -68,6 +68,18 @@ async function registerMiddleware(req, res, next) {
             return next(new ApiError(httpStatus.BAD_REQUEST, errorMessage));
         }
 
+        const tmpPath = join(uploadDirectory, fileName);
+        const newPath = resolve(uploadService.pathUploads, req.body.username, fileName);
+        makeIfNorExists(newPath)
+        rename(
+            tmpPath,
+            newPath, (err) => {
+                if (err) {
+                    console.error('Error moving file:', err);
+                } else {
+                    console.log('File moved successfully!');
+                }
+            });
         Object.assign(req, value);
         req.file = files
         return next();

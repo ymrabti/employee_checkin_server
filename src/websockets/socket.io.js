@@ -5,10 +5,8 @@ const { v4 } = require('uuid');
 const passport = require('passport');
 const { EVENTS } = require("./socket.io-config");
 const config = require("../config/config");
-const { Strategy, ExtractJwt, VerifyCallbackWithRequest } = require('passport-jwt');
 const { generateToken } = require("../services/token.service");
 const { tokenTypes } = require("../config/tokens");
-const { User } = require("../models");
 
 class MySocketIO {
     /** */
@@ -32,6 +30,7 @@ class MySocketIO {
                     socket.emit(EVENTS.JWT_EXPIRED, '');
                     return;
                 }
+
                 socket.user = user;
                 socket.join(user.id);
                 next();
@@ -89,7 +88,7 @@ class MySocketIO {
      * @param {number} newTimer msocket
      */
     resetTimer(socket, newTimer) {
-        if (socket.user.role === 'fieldWorker') {
+        if (`${socket.user.role}`.trim() === 'fieldWorker') {
             if (this.timer != null) clearInterval(this.timer);
             this.handleQr(socket);
             this.timer = setInterval(() => {

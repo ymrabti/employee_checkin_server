@@ -4,14 +4,15 @@ const validate = require('../middlewares/validate');
 const userValidation = require('../validations/user.validation');
 const userController = require('../controllers/user.controller');
 const { uploadService } = require('../services');
+const { allCapabilities } = require('../config/roles');
 
 const router = express.Router();
 
 router
     .route('/')
-    .post(auth('manageUsers'), validate(userValidation.createUser), userController.createUser)
+    .post(auth(allCapabilities.manageUsers), validate(userValidation.createUser), userController.createUser)
     .put(auth(), validate(userValidation.updateUser), userController.updateUser)
-    .get(auth('getUsers'), validate(userValidation.getUsers), userController.getUsers);
+    .get(auth(allCapabilities.listtUsers), validate(userValidation.getUsers), userController.getUsers);
 
 router
     .route('/check')
@@ -25,7 +26,7 @@ router
 router
     .route('/search')
     .get(auth(), validate(userValidation.getUser), userController.getUser)
-    .delete(auth('manageUsers'), validate(userValidation.deleteUser), userController.deleteUser);
+    .delete(auth(allCapabilities.manageUsers), validate(userValidation.deleteUser), userController.deleteUser);
 
 module.exports = router;
 

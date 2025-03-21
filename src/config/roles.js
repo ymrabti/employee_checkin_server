@@ -1,8 +1,15 @@
+
+const allCapabilities = {
+    showQr: 'showQr',
+    listtUsers: 'getUsers',
+    manageUsers: 'manageUsers',
+};
+
 const allRoles = {
     user: [],
-    fieldWorker: ['showQr'],
-    manager: ['getUsers'],
-    admin: ['getUsers', 'manageUsers'],
+    fieldWorker: [allCapabilities.showQr],
+    manager: [allCapabilities.listtUsers],
+    admin: [allCapabilities.listtUsers, allCapabilities.manageUsers],
 };
 
 const roles = Object.keys(allRoles);
@@ -12,4 +19,5 @@ module.exports = {
     roles,
     roleRights,
     allRoles,
+    allCapabilities,
 };
