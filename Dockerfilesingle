@@ -1,0 +1,11 @@
+FROM node:iron-alpine
+
+RUN mkdir -p /usr/src/app && chown -R node:node /usr/src/app
+RUN mkdir -p /usr/src/employees_pointage && chown -R 1000:1000 /usr/src/employees_pointage
+WORKDIR /usr/src/app
+COPY package.json yarn.lock ./
+USER node
+RUN yarn install --pure-lockfile
+COPY --chown=node:node . .
+EXPOSE 7384
+CMD ["yarn", "start"]
