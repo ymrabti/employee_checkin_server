@@ -6,7 +6,7 @@ aws
 yarn-error.log
 
 # Environment varibales
-
+prod.env
 !.env*.example
 
 # Code coverage
