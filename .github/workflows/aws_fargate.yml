@@ -27,5 +27,8 @@ jobs:
       - name: Build, tag, and push Docker image
         run: |
           docker build -t my-ecr-repo .
-          docker tag my-ecr-repo:latest myecr-container:latest
-          docker push myecr-container:latest
+
+          IMAGE_URI=381491864469.dkr.ecr.eu-north-1.amazonaws.com/employee-webservice
+          docker build -t $REPO_NAME .
+          docker tag $REPO_NAME:latest $IMAGE_URI:latest
+          docker push $IMAGE_URI:latest
