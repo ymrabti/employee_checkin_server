@@ -22,7 +22,13 @@ services:
       - image-storage:/usr/src/employees_pointage
     networks:
       - employee-network
-
+  backoffice:
+    build:
+      context: ../Backoffice
+      dockerfile: Dockerfile
+    container_name: backoffice
+    ports:
+      - "7784:80"
   mongodb:
     image: mongo:4.2.1-bionic
     container_name: docker_mongodb

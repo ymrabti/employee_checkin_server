@@ -1,4 +1,4 @@
-FROM node:iron-alpine
+FROM node:iron-alpine3.22
 
 RUN mkdir -p /usr/src/app && chown -R node:node /usr/src/app
 RUN mkdir -p /usr/src/employees_pointage && chown -R 1000:1000 /usr/src/employees_pointage
